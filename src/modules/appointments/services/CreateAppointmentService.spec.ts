@@ -14,6 +14,7 @@ describe('CreateAppointment', () => {
 
   it('should be able to create a new appointment', async () => {
     const appointment = await createAppointment.execute({
+      user_id: '123123',
       date: new Date(),
       provider_id: '123123',
     });
@@ -26,12 +27,14 @@ describe('CreateAppointment', () => {
     const apointmentDate = new Date(2020, 4, 10, 11);
 
     await createAppointment.execute({
+      user_id: '123123',
       date: apointmentDate,
       provider_id: '123123',
     });
 
     expect(
       createAppointment.execute({
+        user_id: '123123',
         date: apointmentDate,
         provider_id: '123123',
       }),

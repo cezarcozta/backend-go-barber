@@ -3,11 +3,9 @@ import AppError from '@shared/errors/AppError';
 import FakeUserRepository from '../repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 import CreateSessionService from './CreateSessionService';
-import CreateUserService from './CreateUserService';
 
 let fakeUserRepository: FakeUserRepository;
 let fakeHashProvider: FakeHashProvider;
-let createUser: CreateUserService;
 let createSession: CreateSessionService;
 
 describe('CreateSession', () => {
@@ -15,15 +13,13 @@ describe('CreateSession', () => {
     fakeUserRepository = new FakeUserRepository();
     fakeHashProvider = new FakeHashProvider();
 
-    createUser = new CreateUserService(fakeUserRepository, fakeHashProvider);
-
     createSession = new CreateSessionService(
       fakeUserRepository,
       fakeHashProvider,
     );
   });
   it('Should be able to create a new Session', async () => {
-    const user = await createUser.execute({
+    const user = await fakeUserRepository.createAndSave({
       name: 'John Doe',
       email: 'johndoe@exemple.com',
       password: '123123',
@@ -48,7 +44,7 @@ describe('CreateSession', () => {
   });
 
   it('Should be able to create a new Session with wrong password', async () => {
-    await createUser.execute({
+    await fakeUserRepository.createAndSave({
       name: 'John Doe',
       email: 'johndoe@exemple.com',
       password: '123123',

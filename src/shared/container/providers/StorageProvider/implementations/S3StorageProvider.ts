@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import aws, { S3 } from 'aws-sdk';
+import mime from 'mime';
 
 import uploadConfig from '@config/upload';
 
@@ -18,32 +19,36 @@ class S3StorageProvider implements IStorageovider {
   public async saveFile(file: string): Promise<string> {
     const originalPAth = path.resolve(uploadConfig.tmpFolder, file);
 
-    const fileContent = await fs.promises.readFile(originalPAth, {
-      encoding: 'UTF-8',
-    });
+    const ContentType = mime.getType(originalPAth);
+
+    if (!ContentType) {
+      throw new Error('File does not found');
+    }
+
+    const fileContent = await fs.promises.readFile(originalPAth);
 
     await this.client
       .putObject({
-        Bucket: 'gobarber-cezarcozta',
+        Bucket: uploadConfig.config.aws.bucket,
         Key: file,
         ACL: 'public-read',
         Body: fileContent,
+        ContentType,
       })
       .promise();
+
+    await fs.promises.unlink(originalPAth);
 
     return file;
   }
 
   public async deleteFile(file: string): Promise<void> {
-    const filePath = path.resolve(uploadConfig.uploadsFolder, file);
-
-    try {
-      await fs.promises.stat(filePath);
-    } catch {
-      return;
-    }
-
-    await fs.promises.unlink(filePath);
+    await this.client
+      .deleteObject({
+        Bucket: 'gobarber-cezarcozta',
+        Key: file,
+      })
+      .promise();
   }
 }
 

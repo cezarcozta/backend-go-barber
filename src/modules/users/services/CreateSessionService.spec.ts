@@ -43,7 +43,7 @@ describe('CreateSession', () => {
     ).rejects.toBeInstanceOf(AppError);
   });
 
-  it('Should be able to create a new Session with wrong password', async () => {
+  it('Should not be able to create a new Session with wrong password', async () => {
     await fakeUserRepository.createAndSave({
       name: 'John Doe',
       email: 'johndoe@exemple.com',

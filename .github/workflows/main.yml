@@ -55,8 +55,8 @@ jobs:
         source: ".,!node_modules"
         target: "~/app/backend-go-barber"
            
-    #yarn na digital ocean
-    - name: install dependencies on digital ocean
+    #yarn na digital ocean run migrations and restart node
+    - name: Yarn, Migration:run, pm2 restart
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -66,25 +66,5 @@ jobs:
         script: |
           cd ~/app/backend-go-barber
           yarn
-      
-    #migrations
-    - name: run migrations on digital ocean
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd ~/app/backend-go-barber
           ./node_modules/.bin/typeorm migration:run
-          
-    #restart node
-    - name: restart node
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_KEY }}
-        script: pm2 restart gobarber-api
+          pm2 restart gobarber-api

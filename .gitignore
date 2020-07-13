@@ -5,7 +5,7 @@ build/
 temp/
 .env
 coverage/
-ormconfig.js
+ormconfig.json
 dist
 
 tmp/*
